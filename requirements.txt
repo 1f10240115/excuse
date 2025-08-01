@@ -1,0 +1,17 @@
+# Django Frontend
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# FastAPI Backend
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0 
