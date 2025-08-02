@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import logging
+
+# ログ設定
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -55,4 +60,28 @@ async def env():
         return {
             "error": str(e),
             "status": "error"
-        } 
+        }
+
+@app.get("/check-env")
+async def check_env():
+    """環境変数チェック - ログ付き"""
+    logger.info("環境変数チェック開始")
+    
+    # すべての環境変数をログに出力
+    all_env = dict(os.environ)
+    logger.info(f"環境変数の数: {len(all_env)}")
+    
+    # Supabase関連の環境変数を確認
+    supabase_vars = {}
+    for key, value in all_env.items():
+        if "SUPABASE" in key.upper():
+            supabase_vars[key] = value[:10] + "..." if len(value) > 10 else value
+            logger.info(f"Found Supabase var: {key}")
+    
+    logger.info(f"Supabase変数の数: {len(supabase_vars)}")
+    
+    return {
+        "total_env_vars": len(all_env),
+        "supabase_vars": supabase_vars,
+        "status": "checked"
+    } 
