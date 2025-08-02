@@ -1,14 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "backend/test_api.py": {
-      "runtime": "python3.9"
+  "builds": [
+    {
+      "src": "backend/test_api.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/backend/test_api.py"
+      "dest": "backend/test_api.py"
     }
   ]
 }
