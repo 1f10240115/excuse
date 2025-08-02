@@ -84,4 +84,22 @@ async def check_env():
         "total_env_vars": len(all_env),
         "supabase_vars": supabase_vars,
         "status": "checked"
+    }
+
+@app.get("/basic")
+async def basic():
+    """基本的なテスト - 環境変数なし"""
+    return {
+        "message": "Basic endpoint works",
+        "timestamp": "2024-01-01",
+        "status": "ok"
+    }
+
+@app.get("/os-test")
+async def os_test():
+    """OS情報テスト - 環境変数なし"""
+    return {
+        "platform": os.name,
+        "cwd": os.getcwd(),
+        "status": "os_info"
     } 
