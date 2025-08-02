@@ -4,20 +4,12 @@
     {
       "src": "backend/main_supabase.py",
       "use": "@vercel/python"
-    },
-    {
-      "src": "frontend/manage.py",
-      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "backend/main_supabase.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/manage.py"
     }
   ],
   "env": {
