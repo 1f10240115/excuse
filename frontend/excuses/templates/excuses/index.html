@@ -247,6 +247,35 @@
                     コピーしました
                     </div>
                 </div>
+
+                <form id="excuseForm">
+                    <!-- 削除ぉ！！！ -->
+                    <!-- <div class="form-group">
+                        <label for="title">タイトル</label>
+                        <input type="text" id="title" name="title" required placeholder="言い訳のタイトルを入力">
+                    </div> -->
+                    <div class="form-group">
+                        <label for="description">説明</label>
+                        <textarea id="description" name="description" rows="3" required placeholder="言い訳の詳細を入力"></textarea>
+                    </div>
+                    <!-- 削除ぉぉぉぉぉ！！！！！！ -->
+                    <!-- <div class="form-group">
+                        <label for="category">カテゴリ</label>
+                        <select id="category" name="category" required>
+                            <option value="">カテゴリを選択</option>
+                            <option value="交通">交通</option>
+                            <option value="健康">健康</option>
+                            <option value="家族">家族</option>
+                            <option value="仕事">仕事</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">作成</button> -->
+                    <button id="btn-ai" class="btn" style="margin-top:12px">AIで生成</button>
+                    <!-- <span id="loading" style="display:none">…生成中</span> -->
+
+                </form>
+                
                 </section>
 
                 <style>
@@ -258,28 +287,7 @@
 
 
 
-                <form id="excuseForm">
-                    <div class="form-group">
-                        <label for="title">タイトル</label>
-                        <input type="text" id="title" name="title" required placeholder="言い訳のタイトルを入力">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">説明</label>
-                        <textarea id="description" name="description" rows="3" required placeholder="言い訳の詳細を入力"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="category">カテゴリ</label>
-                        <select id="category" name="category" required>
-                            <option value="">カテゴリを選択</option>
-                            <option value="交通">交通</option>
-                            <option value="健康">健康</option>
-                            <option value="家族">家族</option>
-                            <option value="仕事">仕事</option>
-                            <option value="その他">その他</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn">作成</button>
-                </form>
+                
             </div>
 
             <!-- メッセージ表示エリア -->
@@ -294,6 +302,55 @@
             </div>
 
 
+            
+<script>
+/** ====== レベル3: AI生成 fetch 配線（DOMから現状を読む版） ====== **/
+
+const DESC_INPUT_ID = "description";                 // 自由記述のID
+const BACKEND_BASE   = "http://localhost:8001";      // FastAPI のURL
+
+const aiBtn    = document.getElementById("btn-ai");
+const loading  = document.getElementById("loading");
+const resultEl = document.getElementById("result");
+
+// 現在のUI選択をDOMから取得（グローバルstateに依存しない）
+function getUISelection() {
+  const minutes = document.querySelector('#grp-min .sel')?.dataset.min ?? "";
+  const cause   = document.querySelector('#grp-cause .sel')?.dataset.cause ?? "";
+  const target  = document.querySelector('#grp-to .sel')?.dataset.to ?? "";
+  const detail  = document.getElementById(DESC_INPUT_ID)?.value ?? "";
+  return { minutes, cause, target, detail };
+}
+
+aiBtn?.addEventListener("click", async () => {
+  const { minutes, cause, target, detail } = getUISelection();
+
+  aiBtn.disabled = true;
+  if (loading) loading.style.display = "inline";
+
+  try {
+    const res = await fetch(`${BACKEND_BASE}/generate_excuse`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ minutes, cause, target, detail })
+    });
+
+    if (!res.ok) {
+      // 503等は適宜フォールバック可（レベル2のテンプレを使う等）
+      const err = await res.json().catch(()=>({detail:res.statusText}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    resultEl.textContent = data.excuse || "生成に失敗しました。";
+  } catch (e) {
+    alert("AI生成に失敗しました: " + (e?.message || e));
+  } finally {
+    aiBtn.disabled = false;
+    if (loading) loading.style.display = "none";
+  }
+});
+</script>
 
 
 
@@ -334,7 +391,7 @@
         // 言い訳一覧を取得
         async function loadExcuses() {
             try {
-                const response = await fetch('/api/excuses/');
+                const response = await fetch('/api/excuses');
                 const excuses = await response.json();
                 displayExcuses(excuses);
             } catch (error) {
@@ -351,13 +408,20 @@
                 return;
             }
 
+            // 削除ぉ
+            // const excusesHtml = excuses.map(excuse => `
+            //     <div class="excuse-card">
+            //         <div class="excuse-title">${excuse.title}</div>
+            //         <div class="excuse-description">${excuse.description}</div>
+            //         <span class="excuse-category">${excuse.category}</span>
+            //     </div>
+            // `).join('');
             const excusesHtml = excuses.map(excuse => `
                 <div class="excuse-card">
-                    <div class="excuse-title">${excuse.title}</div>
                     <div class="excuse-description">${excuse.description}</div>
-                    <span class="excuse-category">${excuse.category}</span>
                 </div>
             `).join('');
+
 
             container.innerHTML = excusesHtml;
         }
@@ -365,32 +429,42 @@
         // 新しい言い訳を作成
         async function createExcuse() {
             const formData = new FormData(document.getElementById('excuseForm'));
+            // const data = {
+            //     title: formData.get('title'),
+            //     description: formData.get('description'),
+            //     category: formData.get('category')
+            // };
             const data = {
-                title: formData.get('title'),
-                description: formData.get('description'),
-                category: formData.get('category')
+                description: formData.get('description')
             };
 
-            try {
-                const response = await fetch('/api/excuses/create/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
+            const response = await fetch('/api/excuses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-                if (response.ok) {
-                    showMessage('言い訳が正常に作成されました！', 'success');
-                    document.getElementById('excuseForm').reset();
-                    loadExcuses(); // 一覧を更新
-                } else {
-                    const error = await response.json();
-                    showMessage('作成に失敗しました: ' + error.error, 'error');
-                }
-            } catch (error) {
-                showMessage('作成に失敗しました: ' + error.message, 'error');
-            }
+
+            // try {
+            //     const response = await fetch('/api/excuses/create/', {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify(data)
+            //     });
+
+            //     if (response.ok) {
+            //         showMessage('言い訳が正常に作成されました！', 'success');
+            //         document.getElementById('excuseForm').reset();
+            //         loadExcuses(); // 一覧を更新
+            //     } else {
+            //         const error = await response.json();
+            //         showMessage('作成に失敗しました: ' + error.error, 'error');
+            //     }
+            // } catch (error) {
+            //     showMessage('作成に失敗しました: ' + error.message, 'error');
+            // }
         }
 
         // メッセージを表示
