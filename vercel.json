@@ -1,38 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "backend/test_api.py",
-      "use": "@vercel/python"
+  "functions": {
+    "backend/test_api.py": {
+      "runtime": "python3.9"
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/",
-      "dest": "backend/test_api.py"
-    },
-    {
-      "src": "/health",
-      "dest": "backend/test_api.py"
-    },
-    {
-      "src": "/test",
-      "dest": "backend/test_api.py"
-    },
-    {
-      "src": "/info",
-      "dest": "backend/test_api.py"
-    },
-    {
-      "src": "/env-test",
-      "dest": "backend/test_api.py"
-    },
-    {
       "src": "/(.*)",
-      "dest": "backend/test_api.py"
+      "dest": "/backend/test_api.py"
     }
-  ],
-  "env": {
-    "PYTHONPATH": "."
-  }
+  ]
 }
