@@ -92,7 +92,7 @@
 
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            color: black;
             padding: 12px 30px;
             border: none;
             border-radius: 8px;
@@ -187,6 +187,71 @@
             <!-- 新規作成フォーム -->
             <div class="form-section">
                 <h2>📝 新しい言い訳を作成</h2>
+
+
+
+
+                <!-- 追加項目 level 2 html -->
+                <section id="excuse-app" style="max-width:640px;margin:24px auto;padding:16px">
+                <div style="margin:12px 0">
+                    <div style="font-weight:600;margin-bottom:6px">到着まで</div>
+                    <div id="grp-min" role="group" aria-label="n分遅れる">
+                    <button class="btn opt sel" data-min="">未選択</button>
+                    <button class="btn opt" data-min="3">3分</button>
+                    <button class="btn opt" data-min="5">5分</button>
+                    <button class="btn opt" data-min="10">10分</button>
+                    <button class="btn opt" data-min="15">15分</button>
+                    <button class="btn opt" data-min="30">30分</button>
+                    <button class="btn opt" data-min="60">60分</button>
+                    </div>
+                </div>
+
+                <div style="margin:12px 0">
+                    <div style="font-weight:600;margin-bottom:6px">原因</div>
+                    <div id="grp-cause" role="group" aria-label="遅刻の原因">
+                    <button class="btn opt sel" data-cause="">未選択</button>
+                    <button class="btn opt" data-cause="寝坊">寝坊</button>
+                    <button class="btn opt" data-cause="予定が長引いた">予定が長引いた</button>
+                    <button class="btn opt" data-cause="電車遅延">電車の遅延</button>
+                    <button class="btn opt" data-cause="バス遅延">バスの遅延</button>
+                    <button class="btn opt" data-cause="体調不良">体調不良</button>
+                    </div>
+                </div>
+
+                <div style="margin:12px 0">
+                    <div style="font-weight:600;margin-bottom:6px">相手</div>
+                    <div id="grp-to" role="group" aria-label="相手">
+                    <button class="btn opt sel" data-to="">未選択</button>
+                    <button class="btn opt" data-to="上司">上司</button>
+                    <button class="btn opt" data-to="同僚">同僚</button>
+                    <button class="btn opt" data-to="友達">友達</button>
+                    <button class="btn opt" data-to="先輩">先輩</button>
+                    <button class="btn opt" data-to="家族">家族</button>
+                    </div>
+                </div>
+
+                <div id="resultWrap" style="margin-top:18px">
+                    <div style="font-weight:600;margin-bottom:6px">出力（タップでコピー）</div>
+                    <div id="result" tabindex="0"
+                        style="border:1px solid #ddd;border-radius:12px;padding:14px;line-height:1.7;user-select:text;cursor:pointer">
+                    </div>
+                    <div id="toast" aria-live="polite"
+                        style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;
+                                padding:8px 12px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none">
+                    コピーしました
+                    </div>
+                </div>
+                </section>
+
+                <style>
+                .btn{padding:8px 10px;border:1px solid #ccc;border-radius:999px;background:#f7f7f7;margin:4px 6px 0 0}
+                .btn.sel{background:#e6f0ff;border-color:#7da7ff}
+                </style>
+
+
+
+
+
                 <form id="excuseForm">
                     <div class="form-group">
                         <label for="title">タイトル</label>
@@ -221,6 +286,30 @@
                     <div class="loading">読み込み中...</div>
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
         </div>
     </div>
 
@@ -314,5 +403,159 @@
             }, 3000);
         }
     </script>
+
+
+
+
+
+
+
+
+
+
+<!-- 追加項目 level2 script -->
+    <script>
+        const TIMES  = ["", "3", "5", "10", "15", "30", "60"];
+        const CAUSES = ["", "寝坊", "予定が長引いた", "電車遅延", "バス遅延", "体調不良"];
+        const TOS    = ["", "上司", "同僚", "友達", "先輩", "家族"];
+
+        function timePhrase(min, variant) {
+        if (!min) return variant === 0 ? "少し" : "少々";        
+        const base = (min === "60") ? "一時間" : `${min}分`;        
+        const approx = (variant === 0) ? "ほど" : "くらい";          
+        return base + approx;
+        }
+
+        const TO_STYLE = {
+        "":     { openers: ["すみません、", "申し訳ありません、"],
+                    closers: ["到着し次第すぐに合流します。", "進展があればまたご連絡します。"] },
+        "上司": { openers: ["大変申し訳ありません、", "申し訳ございません、"],
+                    closers: ["到着後ただちに合流し、すぐに対応いたします。", "必要でしたら先にご指示ください。"] },
+        "同僚": { openers: ["すみません、", "ごめん、"],
+                    closers: ["先に進められるところだけお願い。", "到着後に巻き返します。"] },
+        "友達": { openers: ["ごめん！", "ごめん、"],
+                    closers: ["先に入ってて！", "待たせてごめん！"] },
+        "先輩": { openers: ["申し訳ありません、", "すみません、"],
+                    closers: ["到着し次第すぐにご挨拶に伺います。", "先に始めていただけますと助かります。"] },
+        "家族": { openers: ["ごめん、", "ごめんね、"],
+                    closers: ["着いたらすぐ連絡する。", "先に始めてて大丈夫。"] }
+        };
+
+        const CAUSE_TPL = {
+        "":           ["到着が{tp}遅れます。", "現在{tp}遅れています。"],
+        "寝坊":       ["寝過ごしてしまい、{tp}遅れます。", "起床が遅れており、{tp}遅れます。"],
+        "予定が長引いた": ["直前の予定が長引き、{tp}遅れます。", "前の用事が押しており、{tp}遅れます。"],
+        "電車遅延":   ["電車の遅延により、{tp}遅れます。", "最寄り路線が遅延中のため、{tp}遅れます。"],
+        "バス遅延":   ["バスの遅延により、{tp}遅れます。", "交通状況でバスが遅れており、{tp}遅れます。"],
+        "体調不良":   ["体調が優れず、{tp}遅れます。", "急に具合が悪くなり、{tp}遅れます。"]
+        };
+
+        function buildSentence(min, cause, to, variant) {
+        const tp     = timePhrase(min, variant);
+        const style  = TO_STYLE[to] || TO_STYLE[""];
+        const opener = style.openers[variant];
+        const closer = style.closers[variant];
+        const body   = (CAUSE_TPL[cause] || CAUSE_TPL[""])[variant].replace("{tp}", tp);
+        return `${opener}${body}${closer}`;
+        }
+
+        /* 全組合せプリコンパイル（7×6×6×2 = 504文） */
+        const PREPARED = {}; // key: "min|cause|to" -> [variant0, variant1]
+        for (const min of TIMES) {
+        for (const cause of CAUSES) {
+            for (const to of TOS) {
+            const k = `${min}|${cause}|${to}`;
+            PREPARED[k] = [buildSentence(min, cause, to, 0), buildSentence(min, cause, to, 1)];
+            }
+        }
+        }
+
+        /* ランダム取得（フォールバックあり） */
+        function getPreparedExcuse(min, cause, to) {
+        const k = `${min}|${cause}|${to}`;
+        const pool = PREPARED[k]
+                    || PREPARED[`${min}||${to}`]
+                    || PREPARED[`||`];
+        return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        (function autoWire(){
+        const grpMin   = document.getElementById('grp-min');
+        const grpCause = document.getElementById('grp-cause');
+        const grpTo    = document.getElementById('grp-to');
+        const resultEl = document.getElementById('result');
+        const toast    = document.getElementById('toast');
+        if (!grpMin || !grpCause || !grpTo || !resultEl) return;
+
+        const state = { min: "", cause: "", to: "" };
+
+        function ensureInitialSelection() {
+            [[grpMin, '[data-min=""]'], [grpCause, '[data-cause=""]'], [grpTo, '[data-to=""]']]
+            .forEach(([grp, sel]) => {
+                grp.querySelectorAll('button').forEach(b => b.classList.remove('sel'));
+                const first = grp.querySelector(sel);
+                if (first) first.classList.add('sel');
+            });
+        }
+
+        function selectInGroup(grp, cls) {
+            grp.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            grp.querySelectorAll('button').forEach(b => b.classList.remove('sel'));
+            btn.classList.add('sel');
+            if (cls === 'min')   state.min   = btn.dataset.min   ?? "";
+            if (cls === 'cause') state.cause = btn.dataset.cause ?? "";
+            if (cls === 'to')    state.to    = btn.dataset.to    ?? "";
+            render();
+            });
+        }
+
+        function render() {
+            resultEl.textContent = getPreparedExcuse(state.min, state.cause, state.to);
+        }
+
+        async function copyTextToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.focus(); ta.select();
+            try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+        }
+
+        resultEl.addEventListener('click', async () => {
+            const t = resultEl.textContent.trim();
+            if (!t) return;
+            await copyTextToClipboard(t);
+            if (toast) { toast.style.opacity = '1'; setTimeout(()=> toast.style.opacity = '0', 900); }
+        });
+
+        ensureInitialSelection();          // ← 初期「未選択」を視覚で固定
+        selectInGroup(grpMin, 'min');
+        selectInGroup(grpCause, 'cause');
+        selectInGroup(grpTo, 'to');
+        render();                          // 初回描画（未選択×未選択×未選択）
+        })();
+
+        /* デバッグ用に公開 */
+        window.EXCUSE_PREPARED = PREPARED;
+        window.getPreparedExcuse = getPreparedExcuse;
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html> 
+
+
