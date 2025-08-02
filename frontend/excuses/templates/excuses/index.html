@@ -16,6 +16,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            padding-top: 120px;
         }
 
         .container {
@@ -30,13 +31,18 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            opacity: 0.9;
+            padding: 5px;
+            width: 100%;
+            height: 100px;;
             text-align: center;
+            position: fixed;
+            top: 0;
         }
 
         .header h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
+            margin-bottom: 3px;
         }
 
         .header p {
@@ -92,7 +98,7 @@
 
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            color: black;
             padding: 12px 30px;
             border: none;
             border-radius: 8px;
@@ -187,6 +193,71 @@
             <!-- 新規作成フォーム -->
             <div class="form-section">
                 <h2>📝 新しい言い訳を作成</h2>
+
+
+
+
+                <!-- 追加項目 level 2 html -->
+                <section id="excuse-app" style="max-width:640px;margin:24px auto;padding:16px">
+                <div style="margin:12px 0">
+                    <div style="font-weight:600;margin-bottom:6px">到着まで</div>
+                    <div id="grp-min" role="group" aria-label="n分遅れる">
+                    <button class="btn opt sel" data-min="">未選択</button>
+                    <button class="btn opt" data-min="3">3分</button>
+                    <button class="btn opt" data-min="5">5分</button>
+                    <button class="btn opt" data-min="10">10分</button>
+                    <button class="btn opt" data-min="15">15分</button>
+                    <button class="btn opt" data-min="30">30分</button>
+                    <button class="btn opt" data-min="60">60分</button>
+                    </div>
+                </div>
+
+                <div style="margin:12px 0">
+                    <div style="font-weight:600;margin-bottom:6px">原因</div>
+                    <div id="grp-cause" role="group" aria-label="遅刻の原因">
+                    <button class="btn opt sel" data-cause="">未選択</button>
+                    <button class="btn opt" data-cause="寝坊">寝坊</button>
+                    <button class="btn opt" data-cause="予定が長引いた">予定が長引いた</button>
+                    <button class="btn opt" data-cause="電車遅延">電車の遅延</button>
+                    <button class="btn opt" data-cause="バス遅延">バスの遅延</button>
+                    <button class="btn opt" data-cause="体調不良">体調不良</button>
+                    </div>
+                </div>
+
+                <div style="margin:12px 0">
+                    <div style="font-weight:600;margin-bottom:6px">相手</div>
+                    <div id="grp-to" role="group" aria-label="相手">
+                    <button class="btn opt sel" data-to="">未選択</button>
+                    <button class="btn opt" data-to="上司">上司</button>
+                    <button class="btn opt" data-to="同僚">同僚</button>
+                    <button class="btn opt" data-to="友達">友達</button>
+                    <button class="btn opt" data-to="先輩">先輩</button>
+                    <button class="btn opt" data-to="家族">家族</button>
+                    </div>
+                </div>
+
+                <div id="resultWrap" style="margin-top:18px">
+                    <div style="font-weight:600;margin-bottom:6px">出力（タップでコピー）</div>
+                    <div id="result" tabindex="0"
+                        style="border:1px solid #ddd;border-radius:12px;padding:14px;line-height:1.7;user-select:text;cursor:pointer">
+                    </div>
+                    <div id="toast" aria-live="polite"
+                        style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;
+                                padding:8px 12px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none">
+                    コピーしました
+                    </div>
+                </div>
+                </section>
+
+                <style>
+                .btn{padding:8px 10px;border:1px solid #ccc;border-radius:999px;background:#f7f7f7;margin:4px 6px 0 0}
+                .btn.sel{background:#e6f0ff;border-color:#7da7ff}
+                </style>
+
+
+
+
+
                 <form id="excuseForm">
                     <div class="form-group">
                         <label for="title">タイトル</label>
@@ -221,98 +292,3 @@
                     <div class="loading">読み込み中...</div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <script>
-        // ページ読み込み時に言い訳一覧を取得
-        document.addEventListener('DOMContentLoaded', function() {
-            loadExcuses();
-        });
-
-        // フォーム送信処理
-        document.getElementById('excuseForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            createExcuse();
-        });
-
-        // 言い訳一覧を取得
-        async function loadExcuses() {
-            try {
-                const response = await fetch('/api/excuses/');
-                const excuses = await response.json();
-                displayExcuses(excuses);
-            } catch (error) {
-                showMessage('言い訳の取得に失敗しました: ' + error.message, 'error');
-            }
-        }
-
-        // 言い訳一覧を表示
-        function displayExcuses(excuses) {
-            const container = document.getElementById('excusesContainer');
-            
-            if (excuses.length === 0) {
-                container.innerHTML = '<div class="loading">言い訳がありません</div>';
-                return;
-            }
-
-            const excusesHtml = excuses.map(excuse => `
-                <div class="excuse-card">
-                    <div class="excuse-title">${excuse.title}</div>
-                    <div class="excuse-description">${excuse.description}</div>
-                    <span class="excuse-category">${excuse.category}</span>
-                </div>
-            `).join('');
-
-            container.innerHTML = excusesHtml;
-        }
-
-        // 新しい言い訳を作成
-        async function createExcuse() {
-            const formData = new FormData(document.getElementById('excuseForm'));
-            const data = {
-                title: formData.get('title'),
-                description: formData.get('description'),
-                category: formData.get('category')
-            };
-
-            try {
-                const response = await fetch('/api/excuses/create/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    showMessage('言い訳が正常に作成されました！', 'success');
-                    document.getElementById('excuseForm').reset();
-                    loadExcuses(); // 一覧を更新
-                } else {
-                    const error = await response.json();
-                    showMessage('作成に失敗しました: ' + error.error, 'error');
-                }
-            } catch (error) {
-                showMessage('作成に失敗しました: ' + error.message, 'error');
-            }
-        }
-
-        // メッセージを表示
-        function showMessage(message, type) {
-            const messageArea = document.getElementById('messageArea');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = type;
-            messageDiv.textContent = message;
-            
-            messageArea.innerHTML = '';
-            messageArea.appendChild(messageDiv);
-
-            // 3秒後にメッセージを削除
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
-        }
-    </script>
-</body>
-</html> 

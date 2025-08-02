@@ -20,12 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w!l=+c(jhat8d@=hd6d4e6(ffg-o7^g%!fbx9)n*0gm@bs7e0u'
+import os
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-w!l=+c(jhat8d@=hd6d4e6(ffg-o7^g%!fbx9)n*0gm@bs7e0u')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -130,6 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://*.vercel.app",
 ]
 
 # REST Framework設定
