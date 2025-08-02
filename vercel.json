@@ -8,6 +8,26 @@
   ],
   "routes": [
     {
+      "src": "/",
+      "dest": "backend/test_api.py"
+    },
+    {
+      "src": "/health",
+      "dest": "backend/test_api.py"
+    },
+    {
+      "src": "/test",
+      "dest": "backend/test_api.py"
+    },
+    {
+      "src": "/info",
+      "dest": "backend/test_api.py"
+    },
+    {
+      "src": "/env-test",
+      "dest": "backend/test_api.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "backend/test_api.py"
     }
