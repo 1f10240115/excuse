@@ -32,6 +32,14 @@ async def info():
         "status": "running"
     }
 
+@app.get("/env")
+async def env():
+    """シンプルな環境変数テスト"""
+    return {
+        "supabase_url": os.environ.get("SUPABASE_URL", "NOT_SET"),
+        "debug": os.environ.get("DEBUG", "NOT_SET")
+    }
+
 @app.get("/env-test")
 async def env_test():
     """環境変数のテスト - 強制再デプロイ用"""
