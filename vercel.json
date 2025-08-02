@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/main_supabase.py",
+      "src": "backend/test_api.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "backend/main_supabase.py"
+      "src": "/(.*)",
+      "dest": "backend/test_api.py"
     }
   ],
   "env": {
