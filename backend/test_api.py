@@ -34,7 +34,7 @@ async def info():
 
 @app.get("/env-test")
 async def env_test():
-    """環境変数のテスト"""
+    """環境変数のテスト - 強制再デプロイ用"""
     env_vars = {
         "SUPABASE_URL": os.environ.get("SUPABASE_URL", "NOT_SET"),
         "SUPABASE_KEY": os.environ.get("SUPABASE_KEY", "NOT_SET"),
@@ -49,5 +49,6 @@ async def env_test():
     
     return {
         "environment_variables": env_vars,
-        "status": "environment_check"
+        "status": "environment_check",
+        "deploy_time": "2024-01-01"  # 強制再デプロイ用
     } 
