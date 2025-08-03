@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>認証 - 言い訳ジェネレーター</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .google-login-section {
+            margin-top: 1.5rem;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-toggle button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>🔐 認証</h1>
+            <p>言い訳ジェネレーターにログイン</p>
+        </div>
+
+        <div id="messageArea"></div>
+
+                <!-- ログインフォーム -->
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">メールアドレス</label>
+            <input type="email" id="loginEmail" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">パスワード</label>
+            <input type="password" id="loginPassword" name="password" required>
+          </div>
+          <button type="submit" class="btn">ログイン</button>
+        </form>
+
+        <!-- Googleログインボタン -->
+        <div class="google-login-section">
+          <div class="divider">
+            <span>または</span>
+          </div>
+          <button type="button" class="btn btn-google" onclick="googleSignIn()">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Googleでログイン
+          </button>
+        </div>
+
+        <div class="auth-toggle">
+          <button type="button" onclick="toggleForm()">アカウントを作成</button>
+        </div>
+
+        <!-- 登録フォーム -->
+        <form id="signupForm" style="display: none;">
+            <div class="form-group">
+                <label for="signupEmail">メールアドレス</label>
+                <input type="email" id="signupEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="signupPassword">パスワード</label>
+                <input type="password" id="signupPassword" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">パスワード確認</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="btn">アカウント作成</button>
+        </form>
+
+        <div class="auth-toggle" id="signupToggle" style="display: none;">
+            <button type="button" onclick="toggleForm()">ログインに戻る</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>処理中...</p>
+        </div>
+    </div>
+
+    <script>
+        let isLoginForm = true;
+
+        function toggleForm() {
+            isLoginForm = !isLoginForm;
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const signupToggle = document.getElementById('signupToggle');
+            const authToggle = document.querySelector('.auth-toggle');
+
+            if (isLoginForm) {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                signupToggle.style.display = 'none';
+                authToggle.style.display = 'block';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                signupToggle.style.display = 'block';
+                authToggle.style.display = 'none';
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<div class="message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 5000);
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        // ログインフォーム処理
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading(true);
+
+            const formData = new FormData(e.target);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+
+            try {
+                const response = await fetch('/auth/signin/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(result.message, 'success');
+                    // ログイン成功後、メインページにリダイレクト
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    showMessage(result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('ログインに失敗しました: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // 登録フォーム処理
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading(true);
+
+            const formData = new FormData(e.target);
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+
+            if (password !== confirmPassword) {
+                showMessage('パスワードが一致しません', 'error');
+                showLoading(false);
+                return;
+            }
+
+            const data = {
+                email: formData.get('email'),
+                password: password
+            };
+
+            try {
+                const response = await fetch('/auth/signup/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(result.message, 'success');
+                    // 登録成功後、ログインフォームに切り替え
+                    setTimeout(() => {
+                        toggleForm();
+                    }, 1000);
+                } else {
+                    showMessage(result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('登録に失敗しました: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Google認証
+        function googleSignIn() {
+            showLoading(true);
+            
+            // Google Identity Servicesを使用
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.oauth2.initTokenClient({
+                    client_id: 'YOUR_GOOGLE_CLIENT_ID', // Google Cloud Consoleで取得したクライアントID
+                    scope: 'email profile',
+                    callback: async (response) => {
+                        try {
+                            const result = await fetch('/auth/google-signin/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    access_token: response.access_token
+                                })
+                            });
+
+                            const data = await result.json();
+
+                            if (result.ok) {
+                                showMessage(data.message, 'success');
+                                setTimeout(() => {
+                                    window.location.href = '/';
+                                }, 1000);
+                            } else {
+                                showMessage(data.error, 'error');
+                            }
+                        } catch (error) {
+                            showMessage('Googleログインに失敗しました: ' + error.message, 'error');
+                        } finally {
+                            showLoading(false);
+                        }
+                    }
+                }).requestAccessToken();
+            } else {
+                // Google Identity Servicesが読み込まれていない場合のフォールバック
+                showMessage('Google認証サービスが利用できません', 'error');
+                showLoading(false);
+            }
+        }
+
+        // Google Identity Servicesを読み込み
+        function loadGoogleIdentity() {
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // ページ読み込み時にGoogle Identity Servicesを読み込み
+        document.addEventListener('DOMContentLoaded', loadGoogleIdentity);
+    </script>
+</body>
+</html> 

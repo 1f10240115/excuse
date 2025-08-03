@@ -3,12 +3,46 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
+from gemini_client import GeminiClient, TransientAIError
+
+
+from dotenv import load_dotenv; load_dotenv()
+import os
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
 
 app = FastAPI(
     title="Excuse API",
     description="ExcuseアプリケーションのバックエンドAPI",
     version="1.0.0"
 )
+
+class ExcuseReq(BaseModel):
+    minutes: str  # "" | "3" | "5" | "10" | "15" | "30" | "60"
+    cause: str    # "寝坊" 等 or ""
+    target: str   # "上司" 等 or ""
+    detail: str   # テキストボックス
+
+class ExcuseRes(BaseModel):
+    excuse: str
+
+gemini = GeminiClient()
+
+@app.post("/generate_excuse", response_model=ExcuseRes)
+def generate_excuse(req: ExcuseReq):
+    try:
+        text = gemini.generate_excuse(req.minutes, req.cause, req.target, req.detail)
+        return {"excuse": text}
+    except TransientAIError as e:
+        # モデル過負荷などの一時エラーは 503
+        raise HTTPException(
+            status_code=503,
+            detail="AIが混雑しています。しばらくしてからもう一度お試しください。"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gemini error: {e}")
+
+
 
 # CORS設定
 app.add_middleware(
@@ -21,9 +55,9 @@ app.add_middleware(
 
 # データモデル
 class ExcuseBase(BaseModel):
-    title: str
+    # title: str
     description: str
-    category: str
+    # category: str
 
 class ExcuseCreate(ExcuseBase):
     pass
@@ -38,21 +72,21 @@ class Excuse(ExcuseBase):
 excuses_db = [
     {
         "id": 1,
-        "title": "電車が遅延",
+        # "title": "電車が遅延",
         "description": "電車が遅延してしまいました",
-        "category": "交通"
+        # "category": "交通"
     },
     {
         "id": 2,
-        "title": "体調不良",
+        # "title": "体調不良",
         "description": "体調が悪くて出社できませんでした",
-        "category": "健康"
+        # "category": "健康"
     },
     {
         "id": 3,
-        "title": "家族の急用",
+        # "title": "家族の急用",
         "description": "家族に急用ができて対応していました",
-        "category": "家族"
+        # "category": "家族"
     }
 ]
 
@@ -84,9 +118,9 @@ async def create_excuse(excuse: ExcuseCreate):
     new_id = max(excuse["id"] for excuse in excuses_db) + 1 if excuses_db else 1
     new_excuse = {
         "id": new_id,
-        "title": excuse.title,
+        # "title": excuse.title,
         "description": excuse.description,
-        "category": excuse.category
+        # "category": excuse.category
     }
     excuses_db.append(new_excuse)
     return new_excuse
