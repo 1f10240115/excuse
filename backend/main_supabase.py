@@ -3,7 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import uvicorn
-from supabase.client import supabase
+from supabase import create_client
+import os
+
+# Supabaseクライアントの初期化
+url = os.environ.get("SUPABASE_URL")
+key = os.environ.get("SUPABASE_SERVICE_KEY")
+supabase = create_client(url, key)
 
 app = FastAPI(
     title="Excuse API",
