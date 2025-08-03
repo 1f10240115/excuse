@@ -8,7 +8,7 @@ from gemini_client import GeminiClient, TransientAIError
 
 from dotenv import load_dotenv; load_dotenv()
 import os
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 
 app = FastAPI(

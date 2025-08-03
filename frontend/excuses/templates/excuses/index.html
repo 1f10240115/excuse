@@ -242,12 +242,14 @@
         font-weight: 600;
       }
 
-      .progress-indicator {
+    .progress-indicator {
         display: flex;
         justify-content: center;
+        align-items: center; /* 中心揃え */
         margin: 20px 0;
         gap: 8px;
-      }
+    }
+
 
       .progress-dot {
         width: 12px;
@@ -302,8 +304,39 @@
         pointer-events: none;
         z-index: 1000;
       }
-
       
+
+      /* 矢印ナビゲーションボタン */
+        .nav-arrow {
+        background: #d0d5ff; /* 有効時のベース：やや濃いめ */
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 0 4px;
+        transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        color: #3f51b5; /* 有効時の矢印色を濃く */
+    }
+
+    .nav-arrow:hover:not(.disabled) {
+        background: #b0b8ff; /* さらに濃くして押せる感じ */
+        box-shadow: 0 2px 6px rgba(63,81,181,0.35);
+        transform: translateY(-1px);
+    }
+
+    .nav-arrow.disabled {
+        opacity: 0.4;
+        cursor: default;
+        color: #aaa;
+        background: #f0f4ff; /* 無効時は薄く */
+    }
+
+
       
     </style>
   </head>
@@ -360,6 +393,7 @@
                   <button class="slide-btn" data-cause="体調不良">
                     体調不良
                   </button>
+                  
                 </div>
               </div>
 
@@ -380,10 +414,14 @@
 
             <!-- Progress indicator -->
             <div class="progress-indicator">
-              <div class="progress-dot active" data-slide="0"></div>
-              <div class="progress-dot" data-slide="1"></div>
-              <div class="progress-dot" data-slide="2"></div>
+                <button class="nav-arrow" id="prevBtn" aria-label="前のスライド">←</button>
+                <div class="progress-dot active" data-slide="0"></div>
+                <div class="progress-dot" data-slide="1"></div>
+                <div class="progress-dot" data-slide="2"></div>
+                <button class="nav-arrow" id="nextBtn" aria-label="次のスライド">→</button>
             </div>
+
+
 
 
           <form id="excuseForm">
@@ -719,110 +757,141 @@
         return pool[Math.floor(Math.random() * pool.length)];
       }
 
-      // Slideshow functionality
-      (function initSlideshow() {
-        const slideshowWrapper = document.getElementById("slideshowWrapper");
-        const progressDots = document.querySelectorAll(".progress-dot");
-        const resultEl = document.getElementById("result");
-        const toast = document.getElementById("toast");
+        (async function initSlideshow() {
+            const slideshowWrapper = document.getElementById("slideshowWrapper");
+            const progressDots = document.querySelectorAll(".progress-dot");
+            const resultEl = document.getElementById("result");
+            const toast = document.getElementById("toast");
 
-        if (!slideshowWrapper || !resultEl) return;
+            if (!slideshowWrapper || !resultEl) return;
 
-        let currentSlide = 0;
-        const state = { min: "", cause: "", to: "" };
+            let currentSlide = 0;
+            const state = { min: "", cause: "", to: "" };
 
-        function goToSlide(slideIndex) {
-          currentSlide = slideIndex;
-          const translateX = -slideIndex * 33.333;
-          slideshowWrapper.style.transform = `translateX(${translateX}%)`;
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
 
-          // Update progress dots
-          progressDots.forEach((dot, index) => {
-            dot.classList.toggle("active", index === slideIndex);
-          });
-        }
+            function updateArrows() {
+                if (currentSlide <= 0) {
+                prevBtn.disabled = true;
+                prevBtn.classList.add("disabled");
+                } else {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove("disabled");
+                }
+                if (currentSlide >= 2) {
+                nextBtn.disabled = true;
+                nextBtn.classList.add("disabled");
+                } else {
+                nextBtn.disabled = false;
+                nextBtn.classList.remove("disabled");
+                }
+            }
 
-        function nextSlide() {
-          if (currentSlide < 2) {
-            goToSlide(currentSlide + 1);
-          }
-        }
+            function goToSlide(slideIndex) {
+                currentSlide = Math.max(0, Math.min(2, slideIndex));
+                const translateX = -currentSlide * 33.333;
+                slideshowWrapper.style.transform = `translateX(${translateX}%)`;
 
-        function selectInGroup(grp, cls) {
-          grp.addEventListener("click", (e) => {
-            const btn = e.target.closest(".slide-btn");
-            if (!btn) return;
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                dot.classList.toggle("active", index === currentSlide);
+                });
 
-            grp
-              .querySelectorAll(".slide-btn")
-              .forEach((b) => b.classList.remove("sel"));
-            btn.classList.add("sel");
+                updateArrows();
+            }
 
-            if (cls === "min") state.min = btn.dataset.min ?? "";
-            if (cls === "cause") state.cause = btn.dataset.cause ?? "";
-            if (cls === "to") state.to = btn.dataset.to ?? "";
+            function nextSlide() {
+                if (currentSlide < 2) {
+                goToSlide(currentSlide + 1);
+                }
+            }
 
+            // 矢印クリックで移動
+            prevBtn.addEventListener("click", () => {
+                if (currentSlide > 0) goToSlide(currentSlide - 1);
+            });
+            nextBtn.addEventListener("click", () => {
+                if (currentSlide < 2) goToSlide(currentSlide + 1);
+            });
+
+            function selectInGroup(grp, cls) {
+                grp.addEventListener("click", (e) => {
+                const btn = e.target.closest(".slide-btn");
+                if (!btn) return;
+
+                grp
+                    .querySelectorAll(".slide-btn")
+                    .forEach((b) => b.classList.remove("sel"));
+                btn.classList.add("sel");
+
+                if (cls === "min") state.min = btn.dataset.min ?? "";
+                if (cls === "cause") state.cause = btn.dataset.cause ?? "";
+                if (cls === "to") state.to = btn.dataset.to ?? "";
+
+                render();
+
+                // Auto-advance to next slide after a short delay
+                setTimeout(() => {
+                    nextSlide();
+                }, 100);
+                });
+            }
+
+            function render() {
+                resultEl.textContent = getPreparedExcuse(
+                state.min,
+                state.cause,
+                state.to
+                );
+            }
+
+            async function copyTextToClipboard(text) {
+                if (navigator.clipboard && window.isSecureContext)
+                return navigator.clipboard.writeText(text);
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.position = "fixed";
+                ta.style.left = "-9999px";
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try {
+                document.execCommand("copy");
+                } finally {
+                document.body.removeChild(ta);
+                }
+            }
+
+            resultEl.addEventListener("click", async () => {
+                const t = resultEl.textContent.trim();
+                if (!t) return;
+                await copyTextToClipboard(t);
+                if (toast) {
+                toast.style.opacity = "1";
+                setTimeout(() => (toast.style.opacity = "0"), 900);
+                }
+            });
+
+            // Progress dot navigation (クリックで移動)
+            progressDots.forEach((dot, index) => {
+                dot.addEventListener("click", () => {
+                goToSlide(index);
+                });
+            });
+
+            // Initialize groups and state
+            const grpMin = document.getElementById("grp-min");
+            const grpCause = document.getElementById("grp-cause");
+            const grpTo = document.getElementById("grp-to");
+
+            selectInGroup(grpMin, "min");
+            selectInGroup(grpCause, "cause");
+            selectInGroup(grpTo, "to");
             render();
+            updateArrows(); // 初期の矢印状態反映
+        })();
 
-            // Auto-advance to next slide after a short delay
-            setTimeout(() => {
-              nextSlide();
-            }, 100); // ここも3倍速にしてみました。
-          });
-        }
-
-        function render() {
-          resultEl.textContent = getPreparedExcuse(
-            state.min,
-            state.cause,
-            state.to
-          );
-        }
-
-        async function copyTextToClipboard(text) {
-          if (navigator.clipboard && window.isSecureContext)
-            return navigator.clipboard.writeText(text);
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.style.position = "fixed";
-          ta.style.left = "-9999px";
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          try {
-            document.execCommand("copy");
-          } finally {
-            document.body.removeChild(ta);
-          }
-        }
-
-        resultEl.addEventListener("click", async () => {
-          const t = resultEl.textContent.trim();
-          if (!t) return;
-          await copyTextToClipboard(t);
-          if (toast) {
-            toast.style.opacity = "1";
-            setTimeout(() => (toast.style.opacity = "0"), 900);
-          }
-        });
-
-        // Progress dot navigation
-        progressDots.forEach((dot, index) => {
-          dot.addEventListener("click", () => {
-            goToSlide(index);
-          });
-        });
-
-        // Initialize
-        const grpMin = document.getElementById("grp-min");
-        const grpCause = document.getElementById("grp-cause");
-        const grpTo = document.getElementById("grp-to");
-
-        selectInGroup(grpMin, "min");
-        selectInGroup(grpCause, "cause");
-        selectInGroup(grpTo, "to");
-        render();
-      })();
 
       /* デバッグ用に公開 */
       window.EXCUSE_PREPARED = PREPARED;
