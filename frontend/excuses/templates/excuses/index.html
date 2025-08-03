@@ -1,297 +1,407 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excuse App</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>誠に遅れました。</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            padding-top: 120px;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding-top: 72px; 
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            opacity: 0.9;
-            padding: 5px;
-            width: 100%;
-            height: 100px;;
-            text-align: center;
-            position: fixed;
-            top: 0;
-        }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        opacity: 0.9;
+        width: 100%;
+        height: 64px;
+        text-align: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 3px;
-        }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
 
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
+      }
 
-        .content {
-            padding: 30px;
-        }
+      .header h1 {
+        font-size: 1.6em;
+        margin-bottom: 3px;
+      }
 
-        .form-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
+      .header p {
+        font-size: 1em;
+        opacity: 0.9;
+      }
 
-        .form-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
+      .content {
+        padding: 30px;
+      }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+      .form-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 30px;
+      }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
+      .form-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+      }
 
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: black;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
 
-        .btn:hover {
-            transform: translateY(-2px);
-        }
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
 
-        .excuses-section {
-            margin-top: 30px;
-        }
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: black;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
 
-        .excuses-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
 
-        .excuse-card {
-            background: white;
-            border: 1px solid #e1e5e9;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+      .excuses-section {
+        margin-top: 30px;
+      }
 
-        .excuse-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
+      .excuses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
 
-        .excuse-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
+      .excuse-card {
+        background: white;
+        border: 1px solid #e1e5e9;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
 
-        .excuse-description {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
+      .excuse-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
 
-        .excuse-category {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 500;
-        }
+      .excuse-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+      }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
+      .excuse-description {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.5;
+      }
 
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+      .excuse-category {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 500;
+      }
 
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .success {
+        background: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      /* Slideshow styles */
+      .slideshow-container {
+        max-width: 640px;
+        margin: 24px auto;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slideshow-wrapper {
+        display: flex;
+        transition: transform 0.166s ease-in-out; /* 遅かったので約3倍速にしてみました */
+        width: 300%;
+      }
+
+      .slide {
+        width: 33.333%;
+        flex-shrink: 0;
+        padding: 0px;
+      }
+
+      .slide-title {
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 1.1em;
+        color: #333;
+      }
+
+      .slide-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .slide-btn {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 999px;
+        background: #f7f7f7;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .slide-btn:hover {
+        background: #e6f0ff;
+        border-color: #7da7ff;
+        transform: translateY(-1px);
+      }
+
+      .slide-btn.sel {
+        background: #e6f0ff;
+        border-color: #7da7ff;
+        color: #2c5aa0;
+        font-weight: 600;
+      }
+
+      .progress-indicator {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+        gap: 8px;
+      }
+
+      .progress-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ddd;
+        transition: background 0.3s ease;
+      }
+
+      .progress-dot.active {
+        background: #667eea;
+      }
+
+      .result-section {
+        margin-top: 30px;
+        text-align: center;
+      }
+
+      .result-title {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+      }
+
+      .result-content {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 14px;
+        line-height: 1.7;
+        user-select: text;
+        cursor: pointer;
+        background: #f9f9f9;
+        transition: all 0.3s ease;
+      }
+
+      .result-content:hover {
+        background: #f0f0f0;
+        border-color: #667eea;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        background: #333;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 999px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      
+      
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 Excuse App</h1>
-            <p>言い訳管理システム</p>
+      <div class="header">
+        <h1>🙇誠に遅れました🙇‍♀️</h1>
+      </div>
+
+      <div class="content">
+        <!-- 新規作成フォーム -->
+        <div class="form-section">
+          <h2>📝 新しい言い訳を作成</h2>
+          <!-- Result section -->
+          <div class="result-section" style="text-align: left;">
+            <div class="result-title">出力（タップでコピー）</div>
+            <div class="result-content" id="result"></div>
+          </div>
         </div>
 
-        <div class="content">
-            <!-- 新規作成フォーム -->
-            <div class="form-section">
-                <h2>📝 新しい言い訳を作成</h2>
-
-
-
-
-                <!-- 追加項目 level 2 html -->
-                <section id="excuse-app" style="max-width:640px;margin:24px auto;padding:16px">
-                <div style="margin:12px 0">
-                    <div style="font-weight:600;margin-bottom:6px">到着まで</div>
-                    <div id="grp-min" role="group" aria-label="n分遅れる">
-                    <button class="btn opt sel" data-min="">未選択</button>
-                    <button class="btn opt" data-min="3">3分</button>
-                    <button class="btn opt" data-min="5">5分</button>
-                    <button class="btn opt" data-min="10">10分</button>
-                    <button class="btn opt" data-min="15">15分</button>
-                    <button class="btn opt" data-min="30">30分</button>
-                    <button class="btn opt" data-min="60">60分</button>
-                    </div>
+          <!-- Slideshow section -->
+          <section class="slideshow-container">
+            <div class="slideshow-wrapper" id="slideshowWrapper">
+              <!-- Slide 1: 相手 -->
+              <div class="slide" style="text-align: left;">
+                <div class="slide-title">相手</div>
+                <div class="slide-buttons" id="grp-to">
+                    <button class="slide-btn sel" data-to="">未選択</button>
+                    <button class="slide-btn" data-to="上司">上司</button>
+                    <button class="slide-btn" data-to="同僚">同僚</button>
+                    <button class="slide-btn" data-to="友達">友達</button>
+                    <button class="slide-btn" data-to="先輩">先輩</button>
+                    <button class="slide-btn" data-to="家族">家族</button>
+                    <button class="slide-btn" data-to="先生(教授)">先生(教授)</button>
+                    <button class="slide-btn" data-to="バイト先">バイト先</button>
                 </div>
+              </div>
 
-                <div style="margin:12px 0">
-                    <div style="font-weight:600;margin-bottom:6px">原因</div>
-                    <div id="grp-cause" role="group" aria-label="遅刻の原因">
-                    <button class="btn opt sel" data-cause="">未選択</button>
-                    <button class="btn opt" data-cause="寝坊">寝坊</button>
-                    <button class="btn opt" data-cause="予定が長引いた">予定が長引いた</button>
-                    <button class="btn opt" data-cause="電車遅延">電車の遅延</button>
-                    <button class="btn opt" data-cause="バス遅延">バスの遅延</button>
-                    <button class="btn opt" data-cause="体調不良">体調不良</button>
-                    </div>
+              <!-- Slide 2: 原因 -->
+              <div class="slide">
+                <div class="slide-title">原因</div>
+                <div class="slide-buttons" id="grp-cause">
+                  <button class="slide-btn sel" data-cause="">未選択</button>
+                  <button class="slide-btn" data-cause="寝坊">寝坊</button>
+                  <button class="slide-btn" data-cause="予定が長引いた">
+                    予定が長引いた
+                  </button>
+                  <button class="slide-btn" data-cause="電車遅延">
+                    電車の遅延
+                  </button>
+                  <button class="slide-btn" data-cause="バス遅延">
+                    バスの遅延
+                  </button>
+                  <button class="slide-btn" data-cause="体調不良">
+                    体調不良
+                  </button>
                 </div>
+              </div>
 
-                <div style="margin:12px 0">
-                    <div style="font-weight:600;margin-bottom:6px">相手</div>
-                    <div id="grp-to" role="group" aria-label="相手">
-                    <button class="btn opt sel" data-to="">未選択</button>
-                    <button class="btn opt" data-to="上司">上司</button>
-                    <button class="btn opt" data-to="同僚">同僚</button>
-                    <button class="btn opt" data-to="友達">友達</button>
-                    <button class="btn opt" data-to="先輩">先輩</button>
-                    <button class="btn opt" data-to="家族">家族</button>
-                    </div>
+              <!-- Slide 3: 到着まで -->
+              <div class="slide">
+                <div class="slide-title">到着まで</div>
+                <div class="slide-buttons" id="grp-min">
+                  <button class="slide-btn sel" data-min="">未選択</button>
+                  <button class="slide-btn" data-min="3">3分</button>
+                  <button class="slide-btn" data-min="5">5分</button>
+                  <button class="slide-btn" data-min="10">10分</button>
+                  <button class="slide-btn" data-min="15">15分</button>
+                  <button class="slide-btn" data-min="30">30分</button>
+                  <button class="slide-btn" data-min="60">60分</button>
                 </div>
-
-                <div id="resultWrap" style="margin-top:18px">
-                    <div style="font-weight:600;margin-bottom:6px">出力（タップでコピー）</div>
-                    <div id="result" tabindex="0"
-                        style="border:1px solid #ddd;border-radius:12px;padding:14px;line-height:1.7;user-select:text;cursor:pointer">
-                    </div>
-                    <div id="toast" aria-live="polite"
-                        style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;
-                                padding:8px 12px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none">
-                    コピーしました
-                    </div>
-                </div>
-
-                <form id="excuseForm">
-                    <!-- 削除ぉ！！！ -->
-                    <!-- <div class="form-group">
-                        <label for="title">タイトル</label>
-                        <input type="text" id="title" name="title" required placeholder="言い訳のタイトルを入力">
-                    </div> -->
-                    <div class="form-group">
-                        <label for="description">説明</label>
-                        <textarea id="description" name="description" rows="3" required placeholder="言い訳の詳細を入力"></textarea>
-                    </div>
-                    <!-- 削除ぉぉぉぉぉ！！！！！！ -->
-                    <!-- <div class="form-group">
-                        <label for="category">カテゴリ</label>
-                        <select id="category" name="category" required>
-                            <option value="">カテゴリを選択</option>
-                            <option value="交通">交通</option>
-                            <option value="健康">健康</option>
-                            <option value="家族">家族</option>
-                            <option value="仕事">仕事</option>
-                            <option value="その他">その他</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn">作成</button> -->
-                    <button id="btn-ai" class="btn" style="margin-top:12px">AIで生成</button>
-                    <!-- <span id="loading" style="display:none">…生成中</span> -->
-
-                </form>
-                
-                </section>
-
-                <style>
-                .btn{padding:8px 10px;border:1px solid #ccc;border-radius:999px;background:#f7f7f7;margin:4px 6px 0 0}
-                .btn.sel{background:#e6f0ff;border-color:#7da7ff}
-                </style>
-
-
-
-
-
-                
+              </div>
             </div>
 
-            <!-- メッセージ表示エリア -->
-            <div id="messageArea"></div>
+            <!-- Progress indicator -->
+            <div class="progress-indicator">
+              <div class="progress-dot active" data-slide="0"></div>
+              <div class="progress-dot" data-slide="1"></div>
+              <div class="progress-dot" data-slide="2"></div>
+            </div>
+
+
+          <form id="excuseForm">
+            <div class="form-group">
+              <label for="detailedDescription">詳細な状況説明</label>
+              <textarea
+                id="detailedDescription"
+                name="detailedDescription"
+                rows="4"
+                placeholder="詳細な状況を入力してください"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn">作成</button>
+          </form>
+        </section>
+
+        <!-- メッセージ表示エリア -->
+        <div id="messageArea"></div>
 
             <!-- 言い訳一覧 -->
             <div class="excuses-section">
@@ -305,51 +415,47 @@
             
 <script>
 /** ====== レベル3: AI生成 fetch 配線（DOMから現状を読む版） ====== **/
+  const BACKEND_BASE = "http://localhost:8001"; // FastAPI のポートに合わせる
 
-const DESC_INPUT_ID = "description";                 // 自由記述のID
-const BACKEND_BASE   = "http://localhost:8001";      // FastAPI のURL
+  document.getElementById("excuseForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-const aiBtn    = document.getElementById("btn-ai");
-const loading  = document.getElementById("loading");
-const resultEl = document.getElementById("result");
+    // いま選ばれている UI 状態を DOM から取得（initSlideshow と同じロジック）
+    const minutes = document.querySelector('#grp-min .sel')?.dataset.min ?? "";
+    const cause   = document.querySelector('#grp-cause .sel')?.dataset.cause ?? "";
+    const target  = document.querySelector('#grp-to .sel')?.dataset.to ?? "";
+    const detail  = document.getElementById("detailedDescription")?.value ?? "";
 
-// 現在のUI選択をDOMから取得（グローバルstateに依存しない）
-function getUISelection() {
-  const minutes = document.querySelector('#grp-min .sel')?.dataset.min ?? "";
-  const cause   = document.querySelector('#grp-cause .sel')?.dataset.cause ?? "";
-  const target  = document.querySelector('#grp-to .sel')?.dataset.to ?? "";
-  const detail  = document.getElementById(DESC_INPUT_ID)?.value ?? "";
-  return { minutes, cause, target, detail };
-}
+    // 生成中メッセージ（任意）
+    showMessage("AIが文章を生成しています…", "success");
 
-aiBtn?.addEventListener("click", async () => {
-  const { minutes, cause, target, detail } = getUISelection();
+    try {
+      const res = await fetch(`${BACKEND_BASE}/generate_excuse`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ minutes, cause, target, detail })
+      });
 
-  aiBtn.disabled = true;
-  if (loading) loading.style.display = "inline";
+      if (res.status === 503) {
+        // 混雑時はテンプレにフォールバック
+        const text = (typeof getPreparedExcuse === "function")
+          ? getPreparedExcuse(minutes, cause, target) + "（AI混雑のためテンプレ表示）"
+          : "現在AIが混雑しています。時間をおいて再試行してください。";
+        document.getElementById("result").textContent = text;
+        return;
+      }
 
-  try {
-    const res = await fetch(`${BACKEND_BASE}/generate_excuse`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ minutes, cause, target, detail })
-    });
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({detail:res.statusText}));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
 
-    if (!res.ok) {
-      // 503等は適宜フォールバック可（レベル2のテンプレを使う等）
-      const err = await res.json().catch(()=>({detail:res.statusText}));
-      throw new Error(err.detail || `HTTP ${res.status}`);
+      const data = await res.json();
+      document.getElementById("result").textContent = data.excuse || "生成に失敗しました。";
+    } catch (error) {
+      showMessage("AI生成に失敗しました: " + error.message, "error");
     }
-
-    const data = await res.json();
-    resultEl.textContent = data.excuse || "生成に失敗しました。";
-  } catch (e) {
-    alert("AI生成に失敗しました: " + (e?.message || e));
-  } finally {
-    aiBtn.disabled = false;
-    if (loading) loading.style.display = "none";
-  }
-});
+  });
 </script>
 
 
@@ -376,37 +482,42 @@ aiBtn?.addEventListener("click", async () => {
         </div>
     </div>
 
+    <!-- Toast notification -->
+    <div class="toast" id="toast">コピーしました</div>
+
     <script>
-        // ページ読み込み時に言い訳一覧を取得
-        document.addEventListener('DOMContentLoaded', function() {
-            loadExcuses();
+      // ページ読み込み時に言い訳一覧を取得
+      document.addEventListener("DOMContentLoaded", function () {
+        loadExcuses();
+      });
+
+      // フォーム送信処理
+      document
+        .getElementById("excuseForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          createExcuse();
         });
 
-        // フォーム送信処理
-        document.getElementById('excuseForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            createExcuse();
-        });
-
-        // 言い訳一覧を取得
-        async function loadExcuses() {
-            try {
-                const response = await fetch('/api/excuses');
-                const excuses = await response.json();
-                displayExcuses(excuses);
-            } catch (error) {
-                showMessage('言い訳の取得に失敗しました: ' + error.message, 'error');
-            }
+      // 言い訳一覧を取得
+      async function loadExcuses() {
+        try {
+          const response = await fetch("/api/excuses/");
+          const excuses = await response.json();
+          displayExcuses(excuses);
+        } catch (error) {
+          showMessage("言い訳の取得に失敗しました: " + error.message, "error");
         }
+      }
 
-        // 言い訳一覧を表示
-        function displayExcuses(excuses) {
-            const container = document.getElementById('excusesContainer');
-            
-            if (excuses.length === 0) {
-                container.innerHTML = '<div class="loading">言い訳がありません</div>';
-                return;
-            }
+      // 言い訳一覧を表示
+      function displayExcuses(excuses) {
+        const container = document.getElementById("excusesContainer");
+
+        if (excuses.length === 0) {
+          container.innerHTML = '<div class="loading">言い訳がありません</div>';
+          return;
+        }
 
             // 削除ぉ
             // const excusesHtml = excuses.map(excuse => `
@@ -420,68 +531,63 @@ aiBtn?.addEventListener("click", async () => {
                 <div class="excuse-card">
                     <div class="excuse-description">${excuse.description}</div>
                 </div>
-            `).join('');
+            `
+          )
+          .join("");
 
 
-            container.innerHTML = excusesHtml;
-        }
+        container.innerHTML = excusesHtml;
+      }
 
-        // 新しい言い訳を作成
-        async function createExcuse() {
-            const formData = new FormData(document.getElementById('excuseForm'));
-            // const data = {
-            //     title: formData.get('title'),
-            //     description: formData.get('description'),
-            //     category: formData.get('category')
-            // };
-            const data = {
-                description: formData.get('description')
-            };
+      // 新しい言い訳を作成
+      async function createExcuse() {
+        const formData = new FormData(document.getElementById("excuseForm"));
+        const data = {
+          detailedDescription: formData.get("detailedDescription"),
+        };
 
             const response = await fetch('/api/excuses', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+        try {
+          const response = await fetch("/api/excuses/create/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
 
-
-            // try {
-            //     const response = await fetch('/api/excuses/create/', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(data)
-            //     });
-
-            //     if (response.ok) {
-            //         showMessage('言い訳が正常に作成されました！', 'success');
-            //         document.getElementById('excuseForm').reset();
-            //         loadExcuses(); // 一覧を更新
-            //     } else {
-            //         const error = await response.json();
-            //         showMessage('作成に失敗しました: ' + error.error, 'error');
-            //     }
-            // } catch (error) {
-            //     showMessage('作成に失敗しました: ' + error.message, 'error');
-            // }
+          if (response.ok) {
+            showMessage("言い訳が正常に作成されました！", "success");
+            document.getElementById("excuseForm").reset();
+            loadExcuses(); // 一覧を更新
+          } else {
+            const error = await response.json();
+            showMessage("作成に失敗しました: " + error.error, "error");
+          }
+        } catch (error) {
+          showMessage("作成に失敗しました: " + error.message, "error");
         }
+      }
 
-        // メッセージを表示
-        function showMessage(message, type) {
-            const messageArea = document.getElementById('messageArea');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = type;
-            messageDiv.textContent = message;
-            
-            messageArea.innerHTML = '';
-            messageArea.appendChild(messageDiv);
+      // メッセージを表示
+      function showMessage(message, type) {
+        const messageArea = document.getElementById("messageArea");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = type;
+        messageDiv.textContent = message;
 
-            // 3秒後にメッセージを削除
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
-        }
+        messageArea.innerHTML = "";
+        messageArea.appendChild(messageDiv);
+
+        // 3秒後にメッセージを削除
+        setTimeout(() => {
+          messageDiv.remove();
+        }, 3000);
+      }
     </script>
 
 
@@ -489,153 +595,261 @@ aiBtn?.addEventListener("click", async () => {
 
 
 
-
-
-
-
-<!-- 追加項目 level2 script -->
+    <!-- Slideshow functionality -->
     <script>
-        const TIMES  = ["", "3", "5", "10", "15", "30", "60"];
-        const CAUSES = ["", "寝坊", "予定が長引いた", "電車遅延", "バス遅延", "体調不良"];
-        const TOS    = ["", "上司", "同僚", "友達", "先輩", "家族"];
+      const TIMES = ["", "3", "5", "10", "15", "30", "60"];
+      const CAUSES = [
+        "",
+        "寝坊",
+        "予定が長引いた",
+        "電車遅延",
+        "バス遅延",
+        "体調不良",
+      ];
+      const TOS = ["", "上司", "同僚", "友達", "先輩", "家族", "先生(教授)", "バイト先"];
 
-        function timePhrase(min, variant) {
-        if (!min) return variant === 0 ? "少し" : "少々";        
-        const base = (min === "60") ? "一時間" : `${min}分`;        
-        const approx = (variant === 0) ? "ほど" : "くらい";          
+      function timePhrase(min, variant) {
+        if (!min) return variant === 0 ? "少し" : "少々";
+        const base = min === "60" ? "一時間" : `${min}分`;
+        const approx = variant === 0 ? "ほど" : "くらい";
         return base + approx;
+      }
+
+      const TO_STYLE = {
+        "": {
+          openers: ["すみません、", "申し訳ありません、"],
+          closers: [
+            "到着し次第すぐに合流します。",
+            "進展があればまたご連絡します。",
+          ],
+        },
+        上司: {
+          openers: ["大変申し訳ありません、", "申し訳ございません、"],
+          closers: [
+            "到着後ただちに合流し、すぐに対応いたします。",
+            "必要でしたら先にご指示ください。",
+          ],
+        },
+        同僚: {
+          openers: ["すみません、", "ごめん、"],
+          closers: [
+            "先に進められるところだけお願い。",
+            "到着後に巻き返します。",
+          ],
+        },
+        友達: {
+          openers: ["ごめん！", "ごめん、"],
+          closers: ["先に入ってて！", "待たせてごめん！"],
+        },
+        先輩: {
+          openers: ["申し訳ありません、", "すみません、"],
+          closers: [
+            "到着し次第すぐにご挨拶に伺います。",
+            "先に始めていただけますと助かります。",
+          ],
+        },
+        家族: {
+          openers: ["ごめん、", "ごめんね、"],
+          closers: ["着いたらすぐ連絡する。", "先に始めてて大丈夫。"],
+        },
+        "先生(教授)": {
+            openers: ["失礼いたします、", "申し訳ありません、"],
+            closers: ["到着し次第すぐに伺います。", "先に始めていただけますと幸いです。"]
+        },
+        "バイト先": {
+            openers: ["申し訳ございません、", "大変申し訳ありません、"],
+            closers: ["到着次第ただちに業務に入ります。", "必要でしたら先にご指示をお願いいたします。"]
         }
+      };
 
-        const TO_STYLE = {
-        "":     { openers: ["すみません、", "申し訳ありません、"],
-                    closers: ["到着し次第すぐに合流します。", "進展があればまたご連絡します。"] },
-        "上司": { openers: ["大変申し訳ありません、", "申し訳ございません、"],
-                    closers: ["到着後ただちに合流し、すぐに対応いたします。", "必要でしたら先にご指示ください。"] },
-        "同僚": { openers: ["すみません、", "ごめん、"],
-                    closers: ["先に進められるところだけお願い。", "到着後に巻き返します。"] },
-        "友達": { openers: ["ごめん！", "ごめん、"],
-                    closers: ["先に入ってて！", "待たせてごめん！"] },
-        "先輩": { openers: ["申し訳ありません、", "すみません、"],
-                    closers: ["到着し次第すぐにご挨拶に伺います。", "先に始めていただけますと助かります。"] },
-        "家族": { openers: ["ごめん、", "ごめんね、"],
-                    closers: ["着いたらすぐ連絡する。", "先に始めてて大丈夫。"] }
-        };
+      const CAUSE_TPL = {
+        "": ["到着が{tp}遅れます。", "現在{tp}遅れています。"],
+        寝坊: [
+          "寝過ごしてしまい、{tp}遅れます。",
+          "起床が遅れており、{tp}遅れます。",
+        ],
+        予定が長引いた: [
+          "直前の予定が長引き、{tp}遅れます。",
+          "前の用事が押しており、{tp}遅れます。",
+        ],
+        電車遅延: [
+          "電車の遅延により、{tp}遅れます。",
+          "最寄り路線が遅延中のため、{tp}遅れます。",
+        ],
+        バス遅延: [
+          "バスの遅延により、{tp}遅れます。",
+          "交通状況でバスが遅れており、{tp}遅れます。",
+        ],
+        体調不良: [
+          "体調が優れず、{tp}遅れます。",
+          "急に具合が悪くなり、{tp}遅れます。",
+        ],
+      };
 
-        const CAUSE_TPL = {
-        "":           ["到着が{tp}遅れます。", "現在{tp}遅れています。"],
-        "寝坊":       ["寝過ごしてしまい、{tp}遅れます。", "起床が遅れており、{tp}遅れます。"],
-        "予定が長引いた": ["直前の予定が長引き、{tp}遅れます。", "前の用事が押しており、{tp}遅れます。"],
-        "電車遅延":   ["電車の遅延により、{tp}遅れます。", "最寄り路線が遅延中のため、{tp}遅れます。"],
-        "バス遅延":   ["バスの遅延により、{tp}遅れます。", "交通状況でバスが遅れており、{tp}遅れます。"],
-        "体調不良":   ["体調が優れず、{tp}遅れます。", "急に具合が悪くなり、{tp}遅れます。"]
-        };
-
-        function buildSentence(min, cause, to, variant) {
-        const tp     = timePhrase(min, variant);
-        const style  = TO_STYLE[to] || TO_STYLE[""];
+      function buildSentence(min, cause, to, variant) {
+        const tp = timePhrase(min, variant);
+        const style = TO_STYLE[to] || TO_STYLE[""];
         const opener = style.openers[variant];
         const closer = style.closers[variant];
-        const body   = (CAUSE_TPL[cause] || CAUSE_TPL[""])[variant].replace("{tp}", tp);
+        const body = (CAUSE_TPL[cause] || CAUSE_TPL[""])[variant].replace(
+          "{tp}",
+          tp
+        );
         return `${opener}${body}${closer}`;
-        }
+      }
 
-        /* 全組合せプリコンパイル（7×6×6×2 = 504文） */
-        const PREPARED = {}; // key: "min|cause|to" -> [variant0, variant1]
-        for (const min of TIMES) {
+      /* 全組合せプリコンパイル（7×6×6×2 = 504文） */
+      const PREPARED = {}; // key: "min|cause|to" -> [variant0, variant1]
+      for (const min of TIMES) {
         for (const cause of CAUSES) {
-            for (const to of TOS) {
+          for (const to of TOS) {
             const k = `${min}|${cause}|${to}`;
-            PREPARED[k] = [buildSentence(min, cause, to, 0), buildSentence(min, cause, to, 1)];
-            }
+            PREPARED[k] = [
+              buildSentence(min, cause, to, 0),
+              buildSentence(min, cause, to, 1),
+            ];
+          }
         }
-        }
+      }
 
-        /* ランダム取得（フォールバックあり） */
-        function getPreparedExcuse(min, cause, to) {
+      /* ランダム取得（フォールバックあり） */
+      function getPreparedExcuse(min, cause, to) {
         const k = `${min}|${cause}|${to}`;
-        const pool = PREPARED[k]
-                    || PREPARED[`${min}||${to}`]
-                    || PREPARED[`||`];
+        const pool = PREPARED[k] || PREPARED[`${min}||${to}`] || PREPARED[`||`];
         return pool[Math.floor(Math.random() * pool.length)];
-        }
+      }
 
-        (function autoWire(){
-        const grpMin   = document.getElementById('grp-min');
-        const grpCause = document.getElementById('grp-cause');
-        const grpTo    = document.getElementById('grp-to');
-        const resultEl = document.getElementById('result');
-        const toast    = document.getElementById('toast');
-        if (!grpMin || !grpCause || !grpTo || !resultEl) return;
+      // Slideshow functionality
+      (function initSlideshow() {
+        const slideshowWrapper = document.getElementById("slideshowWrapper");
+        const progressDots = document.querySelectorAll(".progress-dot");
+        const resultEl = document.getElementById("result");
+        const toast = document.getElementById("toast");
 
+        if (!slideshowWrapper || !resultEl) return;
+
+        let currentSlide = 0;
         const state = { min: "", cause: "", to: "" };
 
-        function ensureInitialSelection() {
-            [[grpMin, '[data-min=""]'], [grpCause, '[data-cause=""]'], [grpTo, '[data-to=""]']]
-            .forEach(([grp, sel]) => {
-                grp.querySelectorAll('button').forEach(b => b.classList.remove('sel'));
-                const first = grp.querySelector(sel);
-                if (first) first.classList.add('sel');
-            });
+        function goToSlide(slideIndex) {
+          currentSlide = slideIndex;
+          const translateX = -slideIndex * 33.333;
+          slideshowWrapper.style.transform = `translateX(${translateX}%)`;
+
+          // Update progress dots
+          progressDots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === slideIndex);
+          });
+        }
+
+        function nextSlide() {
+          if (currentSlide < 2) {
+            goToSlide(currentSlide + 1);
+          }
         }
 
         function selectInGroup(grp, cls) {
-            grp.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
+          grp.addEventListener("click", (e) => {
+            const btn = e.target.closest(".slide-btn");
             if (!btn) return;
-            grp.querySelectorAll('button').forEach(b => b.classList.remove('sel'));
-            btn.classList.add('sel');
-            if (cls === 'min')   state.min   = btn.dataset.min   ?? "";
-            if (cls === 'cause') state.cause = btn.dataset.cause ?? "";
-            if (cls === 'to')    state.to    = btn.dataset.to    ?? "";
+
+            grp
+              .querySelectorAll(".slide-btn")
+              .forEach((b) => b.classList.remove("sel"));
+            btn.classList.add("sel");
+
+            if (cls === "min") state.min = btn.dataset.min ?? "";
+            if (cls === "cause") state.cause = btn.dataset.cause ?? "";
+            if (cls === "to") state.to = btn.dataset.to ?? "";
+
             render();
-            });
+
+            // Auto-advance to next slide after a short delay
+            setTimeout(() => {
+              nextSlide();
+            }, 100); // ここも3倍速にしてみました。
+          });
         }
 
         function render() {
-            resultEl.textContent = getPreparedExcuse(state.min, state.cause, state.to);
+          resultEl.textContent = getPreparedExcuse(
+            state.min,
+            state.cause,
+            state.to
+          );
         }
 
         async function copyTextToClipboard(text) {
-            if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
-            const ta = document.createElement('textarea');
-            ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
-            document.body.appendChild(ta); ta.focus(); ta.select();
-            try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+          if (navigator.clipboard && window.isSecureContext)
+            return navigator.clipboard.writeText(text);
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try {
+            document.execCommand("copy");
+          } finally {
+            document.body.removeChild(ta);
+          }
         }
 
-        resultEl.addEventListener('click', async () => {
-            const t = resultEl.textContent.trim();
-            if (!t) return;
-            await copyTextToClipboard(t);
-            if (toast) { toast.style.opacity = '1'; setTimeout(()=> toast.style.opacity = '0', 900); }
+        resultEl.addEventListener("click", async () => {
+          const t = resultEl.textContent.trim();
+          if (!t) return;
+          await copyTextToClipboard(t);
+          if (toast) {
+            toast.style.opacity = "1";
+            setTimeout(() => (toast.style.opacity = "0"), 900);
+          }
         });
 
-        ensureInitialSelection();          // ← 初期「未選択」を視覚で固定
-        selectInGroup(grpMin, 'min');
-        selectInGroup(grpCause, 'cause');
-        selectInGroup(grpTo, 'to');
-        render();                          // 初回描画（未選択×未選択×未選択）
+        // Progress dot navigation
+        progressDots.forEach((dot, index) => {
+          dot.addEventListener("click", () => {
+            goToSlide(index);
+          });
+        });
+
+        // Initialize
+        const grpMin = document.getElementById("grp-min");
+        const grpCause = document.getElementById("grp-cause");
+        const grpTo = document.getElementById("grp-to");
+
+        selectInGroup(grpMin, "min");
+        selectInGroup(grpCause, "cause");
+        selectInGroup(grpTo, "to");
+        render();
+      })();
+
+      /* デバッグ用に公開 */
+      window.EXCUSE_PREPARED = PREPARED;
+      window.getPreparedExcuse = getPreparedExcuse;
+
+
+    //   ページを開いた時、一番上ではなく100pxほど下の画面を表示する。iphoneSEでも「作成」ボタンを見えるようにするための処置。
+      (function () {
+        const nav = performance.getEntriesByType('navigation')[0];
+        const isRestore = nav && (nav.type === 'back_forward'); // 戻る/進む
+        if (location.hash || isRestore) return;
+
+        const header = document.querySelector('.header');
+        const offset = 100; // 固定で100px下から表示する
+
+        // 読み込み完了後にスクロール（iOS Safari対策で少し遅らせる）
+        function doScroll() {
+            window.scrollTo({ top: offset, left: 0, behavior: 'auto' });
+        }
+        if (document.readyState === 'complete') {
+            setTimeout(doScroll, 50);
+        } else {
+            window.addEventListener('load', () => setTimeout(doScroll, 50), { once: true });
+        }
         })();
 
-        /* デバッグ用に公開 */
-        window.EXCUSE_PREPARED = PREPARED;
-        window.getPreparedExcuse = getPreparedExcuse;
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html> 
-
+  </body>
+</html>
 

@@ -39,7 +39,10 @@ class GeminiClient:
         else:
             time_jp = "未選択"
 
-        tone = "丁寧" if target in ("上司", "同僚", "先輩") else ("カジュアル" if target in ("友達", "家族") else "ニュートラル")
+
+        polite_targets = ("上司", "同僚", "先輩", "先生(教授)", "バイト先")
+        casual_targets = ("友達", "家族")
+        tone = "丁寧" if target in polite_targets else ("カジュアル" if target in casual_targets else "ニュートラル")
 
         system = (
         "あなたは日本語で、LINE/SMS向けの短い遅刻連絡文を書くアシスタントです。"
