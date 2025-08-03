@@ -47,4 +47,7 @@ async def os_test():
         "platform": os.name,
         "cwd": os.getcwd(),
         "status": "os_info"
-    } 
+    }
+
+# Vercel用のエクスポート
+handler = app 
