@@ -336,6 +336,60 @@
         background: #f0f4ff; /* 無効時は薄く */
     }
 
+/* タイトルと選択チップ：2カラムで右側は折り返し可 */
+.slide-header{
+  display: grid;
+  grid-template-columns: max-content 1fr; /* 左:タイトル幅だけ / 右:残り全部 */
+  align-items: start;
+  column-gap: 12px;       /* タイトルとチップの間 */
+  row-gap: 6px;
+  margin-bottom: 8px;
+}
+.slide-header .slide-title{
+  white-space: nowrap;    /* タイトルは折り返さない */
+}
+.slide-header .selected-chips{
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;        /* ← ここで複数行に折り返す */
+  gap: 6px;
+  /* ↓ 以前入れていた横スクロール系は削除（または無効化） */
+  overflow: visible;      /* ← 安全のため明示 */
+  white-space: normal;    /* ← 1行固定を解除 */
+}
+
+/* チップ（細め＆×付き）— サイズは前回より少しスリムのまま */
+.slide-header .selected-chip{
+  appearance:none; -webkit-appearance:none;
+  display:inline-flex; align-items:center; gap:6px;
+  padding: 2px 7px;
+  font-size: 11.5px; line-height: 1.05;
+  border-radius:999px;
+  border:1px solid rgba(102,126,234,.35);
+  background: linear-gradient(180deg, #ffffff, #f6f8ff);
+  box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 1px 2px rgba(63,81,181,.10);
+  color:#2c3a66;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .08s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.chip-close{
+  appearance:none; -webkit-appearance:none;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:14px; height:14px;
+  border:none; background:transparent;
+  color:#5f6db0; font-weight:600; line-height:1;
+  opacity:.8; cursor:pointer; border-radius:50%;
+  transition: opacity .15s ease, transform .08s ease, background-color .15s ease;
+}
+.chip-close:hover{ opacity:1; background:rgba(102,126,234,.12); transform:scale(1.06); }
+.chip-close:active{ transform:scale(0.95); }
+
+
+
+
 
       
     </style>
@@ -362,7 +416,12 @@
             <div class="slideshow-wrapper" id="slideshowWrapper">
               <!-- Slide 1: 相手 -->
               <div class="slide" style="text-align: left;">
-                <div class="slide-title">相手</div>
+                <div class="slide-header">
+                    <div class="slide-title">相手</div>
+                    <div class="selected-chips"></div>
+                </div>
+
+
                 <div class="slide-buttons" id="grp-to">
                     <button class="slide-btn sel" data-to="">未選択</button>
                     <button class="slide-btn" data-to="上司">上司</button>
@@ -376,8 +435,12 @@
               </div>
 
               <!-- Slide 2: 原因 -->
-              <div class="slide">
-                <div class="slide-title">原因</div>
+              <div class="slide" style="text-align: left;">
+                  <div class="slide-header">
+                    <div class="slide-title">原因</div>
+                    <div class="selected-chips"></div>
+                </div>
+
                 <div class="slide-buttons" id="grp-cause">
                   <button class="slide-btn sel" data-cause="">未選択</button>
                   <button class="slide-btn" data-cause="寝坊">寝坊</button>
@@ -400,18 +463,22 @@
               </div>
 
               <!-- Slide 3: 到着まで -->
-              <div class="slide">
-                <div class="slide-title">到着まで</div>
-                <div class="slide-buttons" id="grp-min">
-                  <button class="slide-btn sel" data-min="">未選択</button>
-                  <button class="slide-btn" data-min="3">3分</button>
-                  <button class="slide-btn" data-min="5">5分</button>
-                  <button class="slide-btn" data-min="10">10分</button>
-                  <button class="slide-btn" data-min="15">15分</button>
-                  <button class="slide-btn" data-min="30">30分</button>
-                  <button class="slide-btn" data-min="60">60分</button>
+              <div class="slide" style="text-align: left;">
+                <div class="slide-header">
+                    <div class="slide-title">到着まで</div>
+                    <div class="selected-chips"></div>
                 </div>
-              </div>
+                <div class="slide-buttons" id="grp-min">
+                    <button class="slide-btn sel" data-min="">未選択</button>
+                    <button class="slide-btn" data-min="3">3分</button>
+                    <button class="slide-btn" data-min="5">5分</button>
+                    <button class="slide-btn" data-min="10">10分</button>
+                    <button class="slide-btn" data-min="15">15分</button>
+                    <button class="slide-btn" data-min="30">30分</button>
+                    <button class="slide-btn" data-min="60">60分</button>
+                </div>
+                </div>
+
             </div>
 
             <!-- Progress indicator -->
@@ -532,12 +599,12 @@
       });
 
       // フォーム送信処理
-      document
-        .getElementById("excuseForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          createExcuse();
-        });
+    //   document
+    //     .getElementById("excuseForm")
+    //     .addEventListener("submit", function (e) {
+    //       e.preventDefault();
+    //       createExcuse();
+    //     });
 
       // 言い訳一覧を取得
       async function loadExcuses() {
@@ -823,27 +890,72 @@
             });
 
             function selectInGroup(grp, cls) {
-                grp.addEventListener("click", (e) => {
+            grp.addEventListener("click", (e) => {
                 const btn = e.target.closest(".slide-btn");
                 if (!btn) return;
 
-                grp
-                    .querySelectorAll(".slide-btn")
-                    .forEach((b) => b.classList.remove("sel"));
+                grp.querySelectorAll(".slide-btn").forEach(b => b.classList.remove("sel"));
                 btn.classList.add("sel");
 
-                if (cls === "min") state.min = btn.dataset.min ?? "";
-                if (cls === "cause") state.cause = btn.dataset.cause ?? "";
-                if (cls === "to") state.to = btn.dataset.to ?? "";
+                // ここをまとめて変更
+                setSelection(cls, btn.dataset[cls] ?? "");
 
-                render();
+                // Auto-advance
+                setTimeout(() => { if (currentSlide < 2) goToSlide(currentSlide + 1); }, 100);
+            });
+            }
 
-                // Auto-advance to next slide after a short delay
-                setTimeout(() => {
-                    nextSlide();
-                }, 100);
+
+function updateSelectedChips(){
+  // 表示用データに key を持たせる（to/cause/min）
+  const display = [];
+  if (state.to)    display.push({ key:"to",    text: state.to,          slide:0 });
+  if (state.cause) display.push({ key:"cause", text: state.cause,       slide:1 });
+  if (state.min)   display.push({ key:"min",   text: state.min + "分",  slide:2 });
+
+            document.querySelectorAll(".selected-chips").forEach(box=>{
+                box.innerHTML = "";
+                display.forEach(({key, text, slide})=>{
+                const chip = document.createElement("button");
+                chip.type = "button";
+                chip.className = "selected-chip";
+                chip.title = "この項目へ移動";
+                chip.textContent = text;
+
+                // クリックで該当スライドへ
+                chip.addEventListener("click", ()=>goToSlide(slide));
+
+                // × ボタン（チップの右側）
+                const close = document.createElement("span");
+                close.className = "chip-close";
+                close.setAttribute("aria-label", "クリア");
+                close.title = "クリア";
+                close.textContent = "×";
+                // × クリック時は遷移させず、その項目だけ未選択へ
+                close.addEventListener("click", (ev)=>{
+                    ev.stopPropagation();          // チップの遷移を阻止
+                    setSelection(key, "");         // 未選択へ戻す
+                });
+
+                chip.appendChild(close);
+                box.appendChild(chip);
+                });
+            });
+            }
+            const GROUP_ID = { min: "grp-min", cause: "grp-cause", to: "grp-to" };
+
+            function setSelection(kind, value){
+            state[kind] = value ?? "";
+            const grp = document.getElementById(GROUP_ID[kind]);
+            if (grp){
+                grp.querySelectorAll(".slide-btn").forEach(b=>{
+                const v = (b.dataset[kind] ?? "");
+                b.classList.toggle("sel", v === state[kind]);
                 });
             }
+            render(); // 結果とチップを再描画
+            }
+
 
             function render() {
                 resultEl.textContent = getPreparedExcuse(
@@ -851,6 +963,7 @@
                 state.cause,
                 state.to
                 );
+                updateSelectedChips();
             }
 
             async function copyTextToClipboard(text) {
@@ -897,6 +1010,10 @@
             selectInGroup(grpTo, "to");
             render();
             updateArrows(); // 初期の矢印状態反映
+            updateSelectedChips();
+
+            
+
         })();
 
 
@@ -905,14 +1022,14 @@
       window.getPreparedExcuse = getPreparedExcuse;
 
 
-    //   ページを開いた時、一番上ではなく100pxほど下の画面を表示する。iphoneSEでも「作成」ボタンを見えるようにするための処置。
+    //   ページを開いた時、一番上ではなく105pxほど下の画面を表示する。iphoneSEでも「作成」ボタンを見えるようにするための処置。
       (function () {
         const nav = performance.getEntriesByType('navigation')[0];
         const isRestore = nav && (nav.type === 'back_forward'); // 戻る/進む
         if (location.hash || isRestore) return;
 
         const header = document.querySelector('.header');
-        const offset = 100; // 固定で100px下から表示する
+        const offset = 105; // 固定で100px下から表示する
 
         // 読み込み完了後にスクロール（iOS Safari対策で少し遅らせる）
         function doScroll() {
