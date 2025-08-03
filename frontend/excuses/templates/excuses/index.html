@@ -393,6 +393,8 @@
                   <button class="slide-btn" data-cause="体調不良">
                     体調不良
                   </button>
+                   <button class="slide-btn" data-cause="大喜利">大喜利</button><!-- ★追加 -->
+
                   
                 </div>
               </div>
@@ -434,7 +436,7 @@
                 placeholder="詳細な状況を入力してください"
               ></textarea>
             </div>
-            <button type="submit" class="btn">作成</button>
+            <button type="submit" class="btn">AIで作成</button>
           </form>
         </section>
 
@@ -643,6 +645,7 @@
         "電車遅延",
         "バス遅延",
         "体調不良",
+        "大喜利",
       ];
       const TOS = ["", "上司", "同僚", "友達", "先輩", "家族", "先生(教授)", "バイト先"];
 
@@ -721,6 +724,10 @@
         体調不良: [
           "体調が優れず、{tp}遅れます。",
           "急に具合が悪くなり、{tp}遅れます。",
+        ],
+        大喜利: [
+            "宇宙人襲来のため、{tp}遅れます。",      
+            "地球爆発が発生し、{tp}遅れます。",       
         ],
       };
 
